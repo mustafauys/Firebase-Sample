@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pacman/pixel.dart';
 
+import 'path.dart';
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -63,6 +65,56 @@ class _HomePageState extends State<HomePage> {
     43,
     32,
     21,
+    78,
+    79,
+    80,
+    100,
+    101,
+    102,
+    84,
+    85,
+    86,
+    106,
+    107,
+    108,
+    24,
+    35,
+    46,
+    57,
+    30,
+    41,
+    52,
+    63,
+    81,
+    70,
+    59,
+    61,
+    72,
+    83,
+    26,
+    28,
+    37,
+    38,
+    39,
+    123,
+    134,
+    145,
+    156,
+    129,
+    140,
+    151,
+    162,
+    103,
+    114,
+    125,
+    105,
+    116,
+    127,
+    147,
+    148,
+    149,
+    158,
+    160,
   ];
 
   @override
@@ -82,13 +134,15 @@ class _HomePageState extends State<HomePage> {
                   itemBuilder: (BuildContext context, int index) {
                     if (barriers.contains(index)) {
                       return MyPixel(
-                        color: Colors.blue[900],
-                        child: Text(index.toString())
+                        innerColor: Colors.blue[800],
+                        outerColor: Colors.blue[900],
+                        //child: Text(index.toString()));
                       );
                     } else {
-                      return MyPixel(
-                        color: Colors.black,
-                        child: Text(index.toString())
+                      return MyPath(
+                        innerColor: Colors.yellow,
+                        outerColor: Colors.black,
+                        //child: Text(index.toString()));
                       );
                     }
                   }),
