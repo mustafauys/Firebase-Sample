@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pacman/pixel.dart';
+import 'package:pacman/player.dart';
 
 import 'path.dart';
 
@@ -11,6 +12,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   static int numberInRow = 11;
   int numberOfSquares = numberInRow * 17;
+  int player = numberInRow * 16 + 1;
 
   List<int> barriers = [
     0,
@@ -132,7 +134,12 @@ class _HomePageState extends State<HomePage> {
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: numberInRow),
                   itemBuilder: (BuildContext context, int index) {
-                    if (barriers.contains(index)) {
+                    if (player == index) {
+                      return MyPlayer(
+
+                      );
+                    }
+                    else if (barriers.contains(index)) {
                       return MyPixel(
                         innerColor: Colors.blue[800],
                         outerColor: Colors.blue[900],
