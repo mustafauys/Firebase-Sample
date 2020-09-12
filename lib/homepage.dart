@@ -12,7 +12,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   static int numberInRow = 11;
   int numberOfSquares = numberInRow * 17;
-  int player = numberInRow * 16 + 1;
+  int player = numberInRow * 15 + 1;
 
   List<int> barriers = [
     0,
