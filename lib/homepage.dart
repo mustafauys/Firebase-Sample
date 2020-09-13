@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:pacman/pixel.dart';
 import 'package:pacman/player.dart';
@@ -12,7 +14,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   static int numberInRow = 11;
   int numberOfSquares = numberInRow * 17;
-  int player = numberInRow * 16 + 1;
+  int player = numberInRow * 15 + 1;
 
   List<int> barriers = [
     0,
@@ -119,6 +121,18 @@ class _HomePageState extends State<HomePage> {
     160,
   ];
 
+  String direction = "right";
+
+  void startGame() {
+    Timer.periodic(Duration(milliseconds: 150), (timer) {
+      if (!barriers.contains(player + 1)) {
+        setState(() {
+          player++;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,32 +141,48 @@ class _HomePageState extends State<HomePage> {
         children: [
           Expanded(
             flex: 5,
-            child: Container(
-              child: GridView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: numberOfSquares,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: numberInRow),
-                  itemBuilder: (BuildContext context, int index) {
-                    if (player == index) {
-                      return MyPlayer(
+            child: GestureDetector(
+              onVerticalDragUpdate: (details) {
+                if (details.delta.dy > 0) {
+                  direction = "down";
+                } else if (details.delta.dy < 0) {
+                  direction = "up";
+                }
+                
+              },
 
-                      );
-                    }
-                    else if (barriers.contains(index)) {
-                      return MyPixel(
-                        innerColor: Colors.blue[800],
-                        outerColor: Colors.blue[900],
-                        //child: Text(index.toString()));
-                      );
-                    } else {
-                      return MyPath(
-                        innerColor: Colors.yellow,
-                        outerColor: Colors.black,
-                        //child: Text(index.toString()));
-                      );
-                    }
-                  }),
+              onHorizontalDragUpdate: (details) {
+                if (details.delta.dx > 0) {
+                  direction = "right";
+                } else if (details.delta.dx < 0) {
+                  direction = "left";
+                }
+                print(direction);
+              },
+              child: Container(
+                child: GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: numberOfSquares,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: numberInRow),
+                    itemBuilder: (BuildContext context, int index) {
+                      if (player == index) {
+                        return MyPlayer();
+                      } else if (barriers.contains(index)) {
+                        return MyPixel(
+                          innerColor: Colors.blue[800],
+                          outerColor: Colors.blue[900],
+                          //child: Text(index.toString()));
+                        );
+                      } else {
+                        return MyPath(
+                          innerColor: Colors.yellow,
+                          outerColor: Colors.black,
+                          //child: Text(index.toString()));
+                        );
+                      }
+                    }),
+              ),
             ),
           ),
           Expanded(
@@ -164,9 +194,12 @@ class _HomePageState extends State<HomePage> {
                   "Score: ",
                   style: TextStyle(color: Colors.white, fontSize: 40),
                 ),
-                Text(
-                  "P L A Y ",
-                  style: TextStyle(color: Colors.white, fontSize: 40),
+                GestureDetector(
+                  onTap: startGame,
+                  child: Text(
+                    "P L A Y ",
+                    style: TextStyle(color: Colors.white, fontSize: 40),
+                  ),
                 ),
               ],
             )),
