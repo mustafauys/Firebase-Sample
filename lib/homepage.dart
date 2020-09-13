@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:pacman/pixel.dart';
@@ -121,16 +122,92 @@ class _HomePageState extends State<HomePage> {
     160,
   ];
 
+  List<int> food = [];
+
   String direction = "right";
+  bool preGame = true;
+  bool mouthClosed = false;
+  int score = 0;
 
   void startGame() {
-    Timer.periodic(Duration(milliseconds: 150), (timer) {
-      if (!barriers.contains(player + 1)) {
-        setState(() {
-          player++;
-        });
+    moveGhost();
+    preGame = false;
+    getFood();
+    Timer.periodic(Duration(milliseconds: 120), (timer) {
+      setState(() {
+        mouthClosed = !mouthClosed;
+      });
+
+      if (food.contains(player)) {
+        food.remove(player);
+        score++;
+      }
+
+      if (player == ghost) {
+        ghost = -1;
+      }
+
+      switch (direction) {
+        case "left":
+          moveLeft();
+          break;
+        case "right":
+          moveRight();
+          break;
+        case "up":
+          moveUp();
+          break;
+        case "down":
+          moveDown();
+          break;
       }
     });
+  }
+
+  int ghost = numberInRow*2-2;
+  String ghostDirection = "left";
+  void moveGhost(){
+
+  }
+
+  void getFood() {
+    for (int i = 0; i < numberOfSquares; i++) {
+      if (barriers.contains(i)) {
+        food.add(i);
+      }
+    }
+  }
+
+  void moveLeft() {
+    if (!barriers.contains(player - 1)) {
+      setState(() {
+        player--;
+      });
+    }
+  }
+
+  void moveRight() {
+    if (!barriers.contains(player + 1)) {
+      setState(() {
+        player++;
+      });
+    }
+  }
+
+  void moveUp() {
+    if (!barriers.contains(player - numberInRow)) {
+      setState(() {
+        player -= numberInRow;
+      });
+    }
+  }
+
+  void moveDown() {
+    if (!barriers.contains(player + numberInRow)) {
+      setState(() {
+        player += numberInRow;
+      });
+    }
   }
 
   @override
@@ -148,9 +225,7 @@ class _HomePageState extends State<HomePage> {
                 } else if (details.delta.dy < 0) {
                   direction = "up";
                 }
-                
               },
-
               onHorizontalDragUpdate: (details) {
                 if (details.delta.dx > 0) {
                   direction = "right";
@@ -165,9 +240,45 @@ class _HomePageState extends State<HomePage> {
                     itemCount: numberOfSquares,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: numberInRow),
+                    // ignore: missing_return
                     itemBuilder: (BuildContext context, int index) {
-                      if (player == index) {
-                        return MyPlayer();
+                      if (mouthClosed) {
+                        return Padding(
+                          padding: EdgeInsets.all(4),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.yellow,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        );
+                      } else if (player == index) {
+                        switch (direction) {
+                          case "left":
+                            return Transform.rotate(
+                              angle: pi,
+                              child: MyPlayer(),
+                            );
+                            break;
+
+                          case "right":
+                            MyPlayer();
+                            break;
+                          case "up":
+                            return Transform.rotate(
+                              angle: 3 * pi / 2,
+                              child: MyPlayer(),
+                            );
+                            break;
+                          case "down":
+                            return Transform.rotate(
+                              angle: pi / 2,
+                              child: MyPlayer(),
+                            );
+                            break;
+                          default:
+                            return MyPlayer();
+                        }
                       } else if (barriers.contains(index)) {
                         return MyPixel(
                           innerColor: Colors.blue[800],
@@ -191,7 +302,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  "Score: ",
+                  "Score: " + score.toString(),
                   style: TextStyle(color: Colors.white, fontSize: 40),
                 ),
                 GestureDetector(
