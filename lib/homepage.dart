@@ -281,8 +281,8 @@ class _HomePageState extends State<HomePage> {
                         }
                       } else if (barriers.contains(index)) {
                         return MyPixel(
-                          innerColor: Colors.blue[],
-                          outerColor: Colors.blue[],
+                          innerColor: Colors.blue[800],
+                          outerColor: Colors.blue[900],
                           //child: Text(index.toString()));
                         );
                       } else {
